@@ -21,14 +21,16 @@ public class DatabaseDataService {
 
         int count = countOldData(dateTime);
         log.info("Начинаем удаление " + count + " элементов");
+        long start = System.currentTimeMillis();
         while (count > 0) {
             String SQL = "DELETE FROM data WHERE CTID IN (SELECT CTID FROM data " +
                     "WHERE (datetime < ?) LIMIT " + limit + ")";
             jdbcTemplate.update(SQL, dateTime);
-            count -= 10000;
+            count -= limit;
         }
+        long finish = System.currentTimeMillis();
 
-        log.info("Удалено");
+        log.info("Удалено за " + (finish - start) + " милисекунд");
     }
 
     public int countOldData(LocalDateTime dateTime) {
